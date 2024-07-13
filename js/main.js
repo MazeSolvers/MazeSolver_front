@@ -1,5 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const gameContainer = document.getElementById("gameContainer");
-  const game = new Game(gameContainer);
-  game.init();
+import { App } from "./App";
+import { StartMenu } from "./StartMenu";
+
+let app = new App();
+
+window.addEventListener("DOMContentLoaded", () => {
+  _APP = new App();
 });

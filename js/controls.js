@@ -6,17 +6,9 @@ class Controls {
   }
 
   initControls() {
-    this.domElement.addEventListener(
-      "keydown",
-      (event) => this.onKeyDown(event),
-      false
-    );
-    this.domElement.addEventListener(
-      "keyup",
-      (event) => this.onKeyUp(event),
-      false
-    );
     this.keys = {};
+    window.addEventListener("keydown", (event) => this.onKeyDown(event), false);
+    window.addEventListener("keyup", (event) => this.onKeyUp(event), false);
   }
 
   onKeyDown(event) {
@@ -43,3 +35,5 @@ class Controls {
     }
   }
 }
+
+export default Controls;
