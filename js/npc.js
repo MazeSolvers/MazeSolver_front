@@ -6,19 +6,39 @@ export class NPC {
     this.scene = scene;
     this.collidableObjects = collidableObjects;
     this.npc = null;
+    this.npcLight = null; // NPC 조명 변수 추가
     this.loadModel(position);
   }
 
   loadModel(position) {
     const loader = new GLTFLoader();
     loader.load(
-      'http://localhost:8000/models/scene.gltf', // 모델 파일의 경로를 로컬 서버 URL로 설정
+      'http://143.248.200.29:3000/models/scene.gltf',
       (gltf) => {
         this.npc = gltf.scene;
         this.npc.position.copy(position);
         this.npc.scale.set(0.15, 0.15, 0.15);
         this.npc.position.y = 0.1;
+
+        // 모든 메시에 대해 약간의 빨간색 발광 재질 설정
+        this.npc.traverse((node) => {
+          if (node.isMesh) {
+            node.material.emissive = new THREE.Color(0x330000);
+            node.material.emissiveIntensity = 0.5;
+          }
+        });
+
         this.scene.add(this.npc);
+
+        // 방향성 조명 추가
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(1, 1, 1); // 조명의 위치 설정
+        this.scene.add(directionalLight);
+
+        // NPC 주위에 약한 붉은색 조명 추가
+        this.npcLight = new THREE.PointLight(0xff0000, 0.1, 5);
+        this.npcLight.position.set(0, 3, 0);
+        this.scene.add(this.npcLight);
       },
       undefined,
       (error) => {
@@ -27,10 +47,11 @@ export class NPC {
     );
   }
 
+
   checkCollisions() {
     if (!this.npc) return false;
     const npcBox = new THREE.Box3().setFromObject(this.npc);
-    npcBox.expandByScalar(-0.1)
+    npcBox.expandByScalar(-0.1);
     for (let i = 0; i < this.collidableObjects.length; i++) {
       const wallBox = new THREE.Box3().setFromObject(this.collidableObjects[i]);
       if (npcBox.intersectsBox(wallBox)) {
@@ -81,7 +102,7 @@ export class NPC {
     }
 
     if (!foundPath) {
-      this.npc.position.copy(currentPosition); // 경로를 찾지 못하면 원래 위치로 되돌림
+      this.npc.position.copy(currentPosition); // 충돌이 없는 방향을 찾지 못하면 제자리
     }
   }
 }

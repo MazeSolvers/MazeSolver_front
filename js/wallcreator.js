@@ -9,7 +9,7 @@ export class WallCreator {
     // 텍스처 로드
     this.textureLoaded = new Promise((resolve, reject) => {
       const textureLoader = new THREE.TextureLoader();
-      textureLoader.load('http://localhost:8000/models/Concrete042D_4K_Color.jpg', (texture) => {
+      textureLoader.load('http://143.248.200.29:3000/models/Concrete042D_4K_Color.jpg', (texture) => {
         // 텍스처 로드가 완료되면 설정
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;

@@ -53,10 +53,14 @@ export class Game {
     this.maze = new checkmaze(mazeSize);
 
     this.playerStart = { x: 25, z: 25 };
-    this.npc1Start = { x: 1, z: 1 };
-    this.npc2Start = { x: 1, z: 49 };
-    this.npc3Start = { x: 49, z: 1 };
-    this.npc4Start = { x: 49, z: 49 };
+    this.npc1Start = { x: 2, z: 2 };
+    this.npc2Start = { x: 2, z: 48 };
+    this.npc3Start = { x: 48, z: 2 };
+    this.npc4Start = { x: 48, z: 48 };
+    this.npc5Start = { x: 1, z: 2 };
+    this.npc6Start = { x: 1, z: 49 };
+    this.npc7Start = { x: 49, z: 1 };
+    this.npc8Start = { x: 48, z: 49 };
 
     this.targetPosition = new THREE.Vector3(
       50 - Math.floor(mazeSize / 2),
@@ -70,6 +74,10 @@ export class Game {
       [this.npc2Start.x, this.npc2Start.z],
       [this.npc3Start.x, this.npc3Start.z],
       [this.npc4Start.x, this.npc4Start.z],
+      [this.npc5Start.x, this.npc5Start.z],
+      [this.npc6Start.x, this.npc6Start.z],
+      [this.npc7Start.x, this.npc7Start.z],
+      [this.npc8Start.x, this.npc8Start.z],
       [49, 49],
     ];
 
@@ -106,10 +114,10 @@ export class Game {
     const playerInitialPosition = new THREE.Vector3(-12, 0.2, -12);
     this.player = new Player(this.scene, this.camera, playerInitialPosition);
 
-    const npcPosition1 = new THREE.Vector3(-24, 0.5, -24);
-    const npcPosition2 = new THREE.Vector3(-24, 0.5, 24);
-    const npcPosition3 = new THREE.Vector3(24, 0.5, -24);
-    const npcPosition4 = new THREE.Vector3(24, 0.5, 24);
+    const npcPosition1 = new THREE.Vector3(-23, 0.5, -23);
+    const npcPosition2 = new THREE.Vector3(-23, 0.5, 23);
+    const npcPosition3 = new THREE.Vector3(23, 0.5, -23);
+    const npcPosition4 = new THREE.Vector3(23, 0.5, 23);
 
     this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition1));
     this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition2));
@@ -122,8 +130,8 @@ export class Game {
   addFlashlight() {
     this.flashlight = new THREE.SpotLight(
       0xffffff,
-      0.5,
       5,
+      15,
       Math.PI / 16,
       0.9,
       2
@@ -289,6 +297,7 @@ export class Game {
       this.flashlight.target.position.copy(targetPosition);
       this.flashlight.updateMatrixWorld();
       this.flashlight.target.updateMatrixWorld();
+
       for (let npc of this.npcs) {
         npc.update(playerPosition);
       }

@@ -35,7 +35,7 @@ function generateSimpleMaze(size) {
     // 무작위로 더 많은 벽을 제거하여 미로를 더 단순하게 만듦
     for (let y = 1; y < size - 1; y++) {
         for (let x = 1; x < size - 1; x++) {
-            if (maze[y][x] === 1 && Math.random() > 0.7) { // 30% 확률로 벽 제거
+            if (maze[y][x] === 1 && Math.random() > 0.5) { // 30% 확률로 벽 제거
                 maze[y][x] = 0;
             }
         }
@@ -48,7 +48,7 @@ export function createBasicMaze(scene, collidableObjects, wallMaterial, maze, ex
     const mazeData = generateSimpleMaze(maze.size); // 단순한 미로 생성 데이터
     const mazeSize = maze.size; // 미로의 크기
     const wallHeight = 5; // 벽의 높이
-    const wallThickness = 0.5; // 벽의 두께
+    const wallThickness = 0.5; // 벽의 두께aa
 
     // 바닥 생성
     const floorGeometry = new THREE.PlaneGeometry(mazeSize, mazeSize);
