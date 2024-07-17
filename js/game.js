@@ -10,7 +10,7 @@ export class Game {
   constructor(container) {
     this.container = container;
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xeeeeee);
+    this.scene.background = new THREE.Color(0x000000);
     const aspect = window.innerWidth / window.innerHeight;
     const d = 50;
     this.topDownCamera = new THREE.OrthographicCamera(
@@ -43,7 +43,7 @@ export class Game {
     this.speed = 0.1;
     this.turnSpeed = 0.02;
 
-    this.addLights();
+    this.addFlashlight(); // 플래시라이트 추가
     const mazeSize = 51;
     this.maze = new checkmaze(mazeSize);
 
@@ -80,11 +80,13 @@ export class Game {
 
   init() {
     this.camera = this.topDownCamera;
+    this.scene.fog = null;
     this.addMaze();
     this.animate();
   }
 
   start() {
+    this.scene.fog = new THREE.Fog(0x000000, 0.5, 5);
     this.camera = this.firstPersonCamera;
     this.camera.position.set(25 - Math.floor(this.maze.size / 2), 0.2, 25 - Math.floor(this.maze.size / 2));
     this.camera.lookAt(0, 1, 0);
@@ -104,12 +106,18 @@ export class Game {
     this.gameOver = false;
   }
 
-  addLights() {
-    const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-    this.scene.add(light);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    directionalLight.position.set(0, 10, 10);
-    this.scene.add(directionalLight);
+  addFlashlight() {
+    this.flashlight = new THREE.SpotLight(0xffffff, 0.5, 5, Math.PI / 16, 0.9, 2); // 플래시라이트 설정
+    this.flashlight.position.set(0, 2, 0); // 초기 위치 설정
+    this.flashlight.target.position.set(0, 0, 1); // 초기 방향 설정
+    this.flashlight.castShadow = true; // 그림자 생성 설정
+    this.flashlight.shadow.mapSize.width = 1024;
+    this.flashlight.shadow.mapSize.height = 1024;
+    this.flashlight.shadow.camera.near = 0.1;
+    this.flashlight.shadow.camera.far = 10;
+  
+    this.scene.add(this.flashlight);
+    this.scene.add(this.flashlight.target);
   }
 
   async addMaze() {
@@ -196,6 +204,7 @@ export class Game {
   checkGameOver() {
     const playerBox = new THREE.Box3().setFromObject(this.player.capsule);
     for (let npc of this.npcs) {
+      if (!npc.npc) continue; // NPC 객체가 로드되지 않은 경우 건너뜀
       const npcBox = new THREE.Box3().setFromObject(npc.npc);
       if (playerBox.intersectsBox(npcBox)) {
         return true;
@@ -247,16 +256,20 @@ export class Game {
       const playerPosition = new THREE.Vector3();
       this.player.capsule.getWorldPosition(playerPosition);
       this.camera.position.copy(playerPosition);
-      this.camera.position.y += 1.5;
+      this.camera.position.y += 0.25;
 
       const targetPosition = new THREE.Vector3();
       targetPosition.set(
         playerPosition.x + Math.sin(this.player.capsule.rotation.y),
-        playerPosition.y + 1.5,
+        playerPosition.y + 0.25,
         playerPosition.z + Math.cos(this.player.capsule.rotation.y)
       );
 
       this.camera.lookAt(targetPosition);
+      this.flashlight.position.copy(this.camera.position);
+      this.flashlight.target.position.copy(targetPosition);
+      this.flashlight.updateMatrixWorld();
+      this.flashlight.target.updateMatrixWorld();
       for (let npc of this.npcs) {
         npc.update(playerPosition);
       }

@@ -1,31 +1,36 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.128.0";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
 
 export class NPC {
   constructor(scene, collidableObjects, position = new THREE.Vector3(0, 0, 0)) {
     this.scene = scene;
     this.collidableObjects = collidableObjects;
-    this.npc = this.createNPC(position);
-    this.scene.add(this.npc);
+    this.npc = null;
+    this.loadModel(position);
   }
 
-  createNPC(position) {
-    const radius = 0.5;
-    const widthSegments = 16;
-    const heightSegments = 16;
-    const geometry = new THREE.SphereGeometry(
-      radius,
-      widthSegments,
-      heightSegments
+  loadModel(position) {
+    const loader = new GLTFLoader();
+    loader.load(
+      'http://localhost:8000/models/scene.gltf', // 모델 파일의 경로를 로컬 서버 URL로 설정
+      (gltf) => {
+        this.npc = gltf.scene;
+        this.npc.position.copy(position);
+        this.npc.scale.set(0.15, 0.15, 0.15);
+        this.npc.position.y = 0.1;
+        this.scene.add(this.npc);
+      },
+      undefined,
+      (error) => {
+        console.error(error);
+      }
     );
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.scale.set(0.5, 0.5, 0.5);
-    sphere.position.copy(position); // 초기 위치 설정
-    return sphere;
   }
 
   checkCollisions() {
+    if (!this.npc) return false;
     const npcBox = new THREE.Box3().setFromObject(this.npc);
+    npcBox.expandByScalar(-0.1)
     for (let i = 0; i < this.collidableObjects.length; i++) {
       const wallBox = new THREE.Box3().setFromObject(this.collidableObjects[i]);
       if (npcBox.intersectsBox(wallBox)) {
@@ -36,6 +41,7 @@ export class NPC {
   }
 
   update(targetPosition) {
+    if (!this.npc) return;
     const direction = new THREE.Vector3()
       .subVectors(targetPosition, this.npc.position)
       .normalize();
@@ -51,6 +57,7 @@ export class NPC {
   }
 
   findPath(targetPosition) {
+    if (!this.npc) return;
     const directions = [
       new THREE.Vector3(1, 0, 0), // 오른쪽
       new THREE.Vector3(-1, 0, 0), // 왼쪽

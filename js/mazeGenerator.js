@@ -52,7 +52,7 @@ export function createBasicMaze(scene, collidableObjects, wallMaterial, maze, ex
 
     // 바닥 생성
     const floorGeometry = new THREE.PlaneGeometry(mazeSize, mazeSize);
-    const floorMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+    const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x000001 });
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
