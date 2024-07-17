@@ -29,7 +29,7 @@ func NewCheckMaze(size int) *CheckMaze {
 func (maze *CheckMaze) canPlaceWall(x, z int) bool {
 	original := maze.grid[z][x]
 	maze.grid[z][x] = 1
-	connected := maze.dfs(2, 2, maze.size-3, maze.size-3)
+	connected := maze.dfs(25, 25, maze.size-2, maze.size-2)
 	maze.grid[z][x] = original
 	return connected
 }

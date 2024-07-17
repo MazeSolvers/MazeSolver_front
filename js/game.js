@@ -14,7 +14,12 @@ export class Game {
     const aspect = window.innerWidth / window.innerHeight;
     const d = 50;
     this.topDownCamera = new THREE.OrthographicCamera(
-      -d * aspect, d * aspect, d, -d, 1, 1000
+      -d * aspect,
+      d * aspect,
+      d,
+      -d,
+      1,
+      1000
     );
     this.topDownCamera.position.set(0, 20, 0);
     this.topDownCamera.lookAt(0, 0, 0);
@@ -53,7 +58,11 @@ export class Game {
     this.npc3Start = { x: 49, z: 1 };
     this.npc4Start = { x: 49, z: 49 };
 
-    this.targetPosition = new THREE.Vector3(50 - Math.floor(mazeSize / 2), 0.5, 50 - Math.floor(mazeSize / 2));
+    this.targetPosition = new THREE.Vector3(
+      50 - Math.floor(mazeSize / 2),
+      0.5,
+      50 - Math.floor(mazeSize / 2)
+    );
 
     this.excludedPositions = [
       [this.playerStart.x, this.playerStart.z],
@@ -61,7 +70,7 @@ export class Game {
       [this.npc2Start.x, this.npc2Start.z],
       [this.npc3Start.x, this.npc3Start.z],
       [this.npc4Start.x, this.npc4Start.z],
-      [49, 49]
+      [49, 49],
     ];
 
     this.compass = new Compass(container);
@@ -88,26 +97,37 @@ export class Game {
   start() {
     this.scene.fog = new THREE.Fog(0x000000, 0.5, 5);
     this.camera = this.firstPersonCamera;
-    this.camera.position.set(25 - Math.floor(this.maze.size / 2), 0.2, 25 - Math.floor(this.maze.size / 2));
+    this.camera.position.set(
+      25 - Math.floor(this.maze.size / 2),
+      0.2,
+      25 - Math.floor(this.maze.size / 2)
+    );
     this.camera.lookAt(0, 1, 0);
-    const playerInitialPosition = new THREE.Vector3(25 - Math.floor(this.maze.size / 2), 0.2, 25 - Math.floor(this.maze.size / 2));
+    const playerInitialPosition = new THREE.Vector3(-12, 0.2, -12);
     this.player = new Player(this.scene, this.camera, playerInitialPosition);
 
     const npcPosition1 = new THREE.Vector3(-24, 0.5, -24);
-     const npcPosition2 = new THREE.Vector3(-24, 0.5, 24);
-     const npcPosition3 = new THREE.Vector3(24, 0.5, -24);
-     const npcPosition4 = new THREE.Vector3(24, 0.5, 24);
+    const npcPosition2 = new THREE.Vector3(-24, 0.5, 24);
+    const npcPosition3 = new THREE.Vector3(24, 0.5, -24);
+    const npcPosition4 = new THREE.Vector3(24, 0.5, 24);
 
-     this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition1));
-     this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition2));
-     this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition3));
-     this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition4));
+    this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition1));
+    this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition2));
+    this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition3));
+    this.npcs.push(new NPC(this.scene, this.collidableObjects, npcPosition4));
     this.compass.show();
     this.gameOver = false;
   }
 
   addFlashlight() {
-    this.flashlight = new THREE.SpotLight(0xffffff, 0.5, 5, Math.PI / 16, 0.9, 2); // 플래시라이트 설정
+    this.flashlight = new THREE.SpotLight(
+      0xffffff,
+      0.5,
+      5,
+      Math.PI / 16,
+      0.9,
+      2
+    ); // 플래시라이트 설정
     this.flashlight.position.set(0, 2, 0); // 초기 위치 설정
     this.flashlight.target.position.set(0, 0, 1); // 초기 방향 설정
     this.flashlight.castShadow = true; // 그림자 생성 설정
@@ -115,7 +135,7 @@ export class Game {
     this.flashlight.shadow.mapSize.height = 1024;
     this.flashlight.shadow.camera.near = 0.1;
     this.flashlight.shadow.camera.far = 10;
-  
+
     this.scene.add(this.flashlight);
     this.scene.add(this.flashlight.target);
   }
@@ -180,7 +200,6 @@ export class Game {
       }
     });
   }
-
 
   checkCollisions() {
     const playerBox = new THREE.Box3().setFromObject(this.player.capsule);

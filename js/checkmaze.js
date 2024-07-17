@@ -14,7 +14,7 @@ export class checkmaze {
   canPlaceWall(x, z) {
     const original = this.grid[z][x];
     this.grid[z][x] = 1;
-    const connected = this.dfs(1, 1, this.size - 3, this.size - 3); // 시작과 끝 좌표를 확인
+    const connected = this.dfs(25, 25, this.size - 2, this.size - 2); // 시작과 끝 좌표를 확인
     this.grid[z][x] = original;
     return connected;
   }
